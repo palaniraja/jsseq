@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JS Sequence</title>
+    <link rel="stylesheet" type="text/css" href="styles/flexbox.css">
+    <script type="text/javascript" src="js/raphael-min.js"></script>
+    <script type="text/javascript" src="js/underscore-min.js"></script>
+    <script type="text/javascript" src="js/sequence-diagram-min.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <!-- <script src="js/svginnerhtml.min.js"></script> -->
+</head>
+
+<body>
+    <div class="flexbox-parent">
+        <div class="flexbox-item header">
+            <strong>Sequence draw</strong> <em>simple UI to match my <a href="https://github.com/bramp/js-sequence-diagrams">js-sequence-diagrams</a> workflow </em>
+        </div>
+        <div class="flexbox-item fill-area content flexbox-item-grow">
+            <div class="fill-area-content flexbox-item-grow" id="diagram">
+            </div>
+        </div>
+        <div class="flexbox-item footer">
+            <textarea class="text" rows="12">Andrew->China: Says Hello 
+Note right of China: China thinks\nabout it 
+China-->Andrew: How are you? 
+Andrew->>China: I am good thanks!</textarea>
+            <button onclick="render();">Render</button>
+            <a class="download" href="#">Save as SVG</a>
+        </div>
+    </div>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        render();
+        $(".download").click(saveSvg);
+    });
+
+    function render() {
+        var diagram = Diagram.parse($(".text").val());
+        $("#diagram").empty(); //clear the previous one
+        diagram.drawSVG('diagram', {
+            "theme": "simple"
+        });
+    };
+
+    function saveSvg(ev){
+        var svg = $("#diagram").find('svg')[0];
+          var width = parseInt(svg.width.baseVal.value);
+          var height = parseInt(svg.height.baseVal.value);
+          var txtdiag = $(".text").val();
+
+          var title = txtdiag.split("\n");
+          if(title.length){
+            title = title[0].replace(/title:(\ )?/g, '') + '.svg';
+          }
+          else{
+            title = 'diagram.svg';
+          }
+          console.log(title);
+          var data = "1234" + txtdiag +"X";
+          var xml = '<?xml version="1.0" encoding="utf-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"><svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '" xmlns:xlink="http://www.w3.org/1999/xlink"><source><![CDATA[' + data + ']]></source>' + svg.innerHTML + '</svg>';
+
+          var a = $(".download");
+          a.attr("download", title); // TODO I could put title here
+          a.attr("href", "data:image/svg+xml," + encodeURIComponent(xml));
+        
+    }
+    </script>
+</body>
+
+</html>
